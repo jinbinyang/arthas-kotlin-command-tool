@@ -1,0 +1,1134 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Arthas Kotlin Command Tool v2</title>
+    <style>
+      :root {
+        --bg: #eef3f6;
+        --panel: #fff;
+        --panel-2: #f6f8fb;
+        --text: #1f2933;
+        --muted: #64748b;
+        --border: #d5dde8;
+        --accent: #0f766e;
+        --accent-2: #0b5f59;
+        --accent-soft: #d8f3ef;
+        --code: #111827;
+        --code-text: #e8eef7;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      code {
+        border-radius: 4px;
+        background: #e9eef4;
+        color: #263447;
+        padding: 1px 5px;
+      }
+
+      .top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 20px 18px 10px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      .mark {
+        display: grid;
+        width: 42px;
+        height: 42px;
+        place-items: center;
+        border-radius: 8px;
+        background: var(--accent);
+        color: #fff;
+        font-weight: 800;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 22px;
+        line-height: 1.25;
+      }
+
+      .subtitle {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .version {
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--muted);
+        padding: 6px 10px;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(360px, 1fr) minmax(280px, 360px) minmax(420px, 1.15fr);
+        gap: 14px;
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 10px 18px 24px;
+      }
+
+      .panel {
+        min-width: 0;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        padding: 14px;
+        box-shadow: 0 14px 30px rgba(31, 41, 55, 0.1);
+      }
+
+      .panel-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .panel-title h2 {
+        font-size: 16px;
+      }
+
+      .pill {
+        border-radius: 999px;
+        background: #eef2f7;
+        color: var(--muted);
+        padding: 4px 9px;
+        font-size: 12px;
+      }
+
+      .pill.ok {
+        background: var(--accent-soft);
+        color: var(--accent-2);
+      }
+
+      .grid {
+        display: grid;
+        gap: 10px;
+      }
+
+      .grid.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid.four {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      label.field {
+        display: grid;
+        gap: 5px;
+        margin-bottom: 10px;
+      }
+
+      .field span {
+        color: #35465c;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--text);
+        outline: none;
+        padding: 9px 10px;
+        line-height: 1.45;
+      }
+
+      textarea {
+        min-height: 92px;
+        resize: vertical;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 13px;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: rgba(15, 118, 110, 0.65);
+        box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.14);
+      }
+
+      .target-box,
+      .quick-box,
+      .details-box {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel-2);
+        padding: 12px;
+      }
+
+      .target-box {
+        margin: 4px 0 12px;
+      }
+
+      .target-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .target-head h3,
+      .details-box h3 {
+        margin-bottom: 9px;
+        font-size: 14px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 34px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--text);
+        cursor: pointer;
+        padding: 7px 11px;
+        font-weight: 700;
+      }
+
+      .button.primary {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .button.small {
+        min-height: 28px;
+        padding: 4px 8px;
+        font-size: 12px;
+      }
+
+      .command-select-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .quick-box {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 12px;
+        border-color: rgba(15, 118, 110, 0.4);
+        background: var(--accent-soft);
+      }
+
+      .quick-title {
+        color: var(--accent-2);
+        font-size: 13px;
+      }
+
+      .quick-code,
+      .command-code {
+        display: block;
+        margin: 0;
+        border-radius: 7px;
+        background: var(--code);
+        color: var(--code-text);
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        line-height: 1.5;
+      }
+
+      .quick-code {
+        max-height: 120px;
+        overflow: auto;
+        padding: 10px;
+        font-size: 12px;
+      }
+
+      .command-code {
+        min-height: 92px;
+        padding: 14px;
+        font-size: 14px;
+      }
+
+      .command-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .command-row {
+        display: grid;
+        grid-template-columns: 30px 1fr;
+        gap: 8px;
+        align-items: center;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: #fff;
+        padding: 8px;
+      }
+
+      .command-row.active {
+        border-color: var(--accent);
+        background: #cceee8;
+        box-shadow: inset 4px 0 0 var(--accent);
+      }
+
+      .drag {
+        display: grid;
+        width: 26px;
+        height: 34px;
+        place-items: center;
+        border: 0;
+        border-radius: 6px;
+        background: #edf2f7;
+        color: var(--muted);
+        cursor: grab;
+        font-weight: 900;
+        touch-action: none;
+      }
+
+      .choice {
+        display: grid;
+        grid-template-columns: 18px 1fr;
+        gap: 8px;
+        align-items: center;
+        cursor: pointer;
+      }
+
+      .choice input {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--accent);
+      }
+
+      .name {
+        display: block;
+        font-weight: 800;
+        line-height: 1.25;
+      }
+
+      .desc {
+        display: block;
+        margin-top: 2px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .output-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .output-head h2 {
+        font-size: 19px;
+      }
+
+      .output-summary {
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .copy-status {
+        min-height: 24px;
+        padding-top: 7px;
+        color: var(--accent-2);
+        font-size: 13px;
+      }
+
+      .details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .details-box p,
+      .details-box li {
+        color: #35465c;
+        font-size: 14px;
+        line-height: 1.58;
+      }
+
+      .details-box ul {
+        margin: 0;
+        padding-left: 19px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+        overflow: hidden;
+        border-radius: 7px;
+        background: #fff;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid #e6ebf1;
+        padding: 9px 10px;
+        text-align: left;
+        vertical-align: top;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      th {
+        background: #f1f5f9;
+        color: #344256;
+        font-weight: 800;
+      }
+
+      td:first-child {
+        width: 150px;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      }
+
+      .doc-link {
+        color: var(--accent-2);
+        font-size: 13px;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .doc-link:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 1120px) {
+        .layout {
+          grid-template-columns: 1fr 330px;
+        }
+
+        .output-panel {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .top {
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 16px 12px 8px;
+        }
+
+        .layout {
+          grid-template-columns: 1fr;
+          padding: 8px 12px 20px;
+        }
+
+        .grid.two,
+        .grid.four,
+        .details {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <div class="brand">
+        <div class="mark">AK</div>
+        <div>
+          <h1>Arthas Kotlin 命令生成器</h1>
+          <p class="subtitle">v2 单文件重做版，命令选择、说明、参数和输出强同步更新</p>
+        </div>
+      </div>
+      <span class="version">v2-20260609-2</span>
+    </header>
+
+    <main class="layout">
+      <section class="panel input-panel">
+        <div class="panel-title">
+          <h2>目标方法</h2>
+          <span id="parse-state" class="pill">等待输入</span>
+        </div>
+
+        <label class="field">
+          <span>IDEA Copy Reference / Kotlin 文件路径 / 类名</span>
+          <textarea id="reference" spellcheck="false" placeholder="/Users/me/project/src/main/kotlin/com/example/order/OrderService.kt
+com.example.order.OrderService#submit
+com.example.order.OrderService.submit"></textarea>
+        </label>
+
+        <div class="grid two">
+          <label class="field">
+            <span>方法名 / method-pattern</span>
+            <input id="method" spellcheck="false" placeholder="submit" />
+          </label>
+          <label class="field">
+            <span>Kotlin 场景</span>
+            <select id="kind">
+              <option value="member">普通类 / 成员方法</option>
+              <option value="topLevel">顶层函数 / 顶层属性</option>
+              <option value="object">object 单例</option>
+              <option value="companion">companion object</option>
+              <option value="interfaceDefault">interface 默认实现</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="grid two">
+          <label class="field">
+            <span>包名 override</span>
+            <input id="packageName" spellcheck="false" placeholder="com.example.order" />
+          </label>
+          <label class="field">
+            <span>类名 / facade 名 override</span>
+            <input id="className" spellcheck="false" placeholder="OrderService 或 OrderUtil" />
+          </label>
+        </div>
+
+        <div class="target-box">
+          <div class="target-head">
+            <h3>Arthas 匹配目标</h3>
+            <button id="infer" class="button small" type="button">重新推导</button>
+          </div>
+          <label class="field">
+            <span>class-pattern</span>
+            <input id="classPattern" spellcheck="false" />
+          </label>
+          <label class="field">
+            <span>method-pattern</span>
+            <input id="methodPattern" spellcheck="false" />
+          </label>
+        </div>
+
+        <details open>
+          <summary><strong>命令参数</strong></summary>
+          <div class="grid two" style="margin-top: 10px">
+            <label class="field">
+              <span>watch 表达式</span>
+              <input id="watchExpr" spellcheck="false" value="{params, target, returnObj, throwExp}" />
+            </label>
+            <label class="field">
+              <span>条件表达式</span>
+              <input id="condition" spellcheck="false" placeholder="#cost>100 或 params[0] != null" />
+            </label>
+          </div>
+          <div class="grid four">
+            <label class="field">
+              <span>次数 -n</span>
+              <input id="count" type="number" min="1" value="5" />
+            </label>
+            <label class="field">
+              <span>展开 -x</span>
+              <input id="expand" type="number" min="1" max="4" value="2" />
+            </label>
+            <label class="field">
+              <span>周期</span>
+              <input id="cycle" type="number" min="1" value="5" />
+            </label>
+            <label class="field">
+              <span>最大匹配 -m</span>
+              <input id="maxMatch" type="number" min="1" value="1" />
+            </label>
+          </div>
+          <div class="grid two">
+            <label class="field">
+              <span>classloader hash</span>
+              <input id="classloader" spellcheck="false" placeholder="先用 sc -d 查，可留空" />
+            </label>
+            <label class="field">
+              <span>watch 观察点</span>
+              <select id="watchPoint">
+                <option value="-f">结束时 -f</option>
+                <option value="-s">正常返回 -s</option>
+                <option value="-e">异常抛出 -e</option>
+                <option value="-b">进入前 -b</option>
+                <option value="-b -s -e">进入 + 返回 + 异常</option>
+              </select>
+            </label>
+          </div>
+        </details>
+      </section>
+
+      <aside class="panel command-panel">
+        <div class="panel-title">
+          <h2>命令</h2>
+          <span class="pill">拖拽手柄排序</span>
+        </div>
+
+        <div class="command-select-row">
+          <select id="commandSelect" aria-label="选择命令"></select>
+          <button id="resetOrder" class="button" type="button">重置排序</button>
+        </div>
+
+        <div class="quick-box">
+          <div class="quick-title">当前：<strong id="quickTitle">watch</strong></div>
+          <pre id="quickCommand" class="quick-code"></pre>
+        </div>
+
+        <div id="commandList" class="command-list"></div>
+      </aside>
+
+      <section class="panel output-panel">
+        <div class="output-head">
+          <div>
+            <h2 id="commandTitle">watch</h2>
+            <p id="commandSummary" class="output-summary"></p>
+          </div>
+          <button id="copy" class="button primary" type="button">复制命令</button>
+        </div>
+
+        <pre id="commandOutput" class="command-code"></pre>
+        <div id="copyStatus" class="copy-status"></div>
+
+        <div class="details">
+          <article class="details-box">
+            <h3>完整解释</h3>
+            <p id="explain"></p>
+          </article>
+          <article class="details-box">
+            <h3>Kotlin/JVM 注意点</h3>
+            <ul id="notes"></ul>
+          </article>
+        </div>
+
+        <div class="details-box" style="margin-top: 12px">
+          <div class="panel-title" style="margin-bottom: 0">
+            <h3 style="margin: 0">参数说明</h3>
+            <a id="docLink" class="doc-link" href="#" target="_blank" rel="noreferrer">官方文档</a>
+          </div>
+          <table>
+            <thead>
+              <tr><th>参数</th><th>说明</th></tr>
+            </thead>
+            <tbody id="params"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const DOC = "https://arthas.aliyun.com/doc";
+
+      const commands = [
+        {
+          id: "watch",
+          name: "watch",
+          short: "入参 / 返回 / 异常",
+          summary: "观察目标方法的入参、返回值、抛出异常和 this 对象。",
+          doc: `${DOC}/watch.html`,
+          explain: "watch 会在指定方法的进入、返回、异常或结束位置计算 OGNL 表达式，适合看一次调用里的 params、target、returnObj、throwExp。",
+          params: [
+            ["class-pattern", "目标 JVM 类名，例如 FooKt、Outer$Companion。"],
+            ["method-pattern", "目标方法名，可用 *。"],
+            ["express", "观察表达式，默认 {params, target, returnObj, throwExp}。"],
+            ["-b/-s/-e/-f", "进入前、正常返回、异常、结束后观察。"],
+            ["-n/-x/-m", "限制次数、展开深度、最大匹配类数。"],
+            ["-c", "指定 classloader hash。"],
+          ],
+          build: (c) => join(["watch", c.watchPoint, `-n ${c.count}`, `-x ${c.expand}`, `-m ${c.maxMatch}`, c.loaderOpt("-c"), c.cls, c.method, quote(c.watchExpr), c.condition && quote(c.condition)]),
+        },
+        {
+          id: "trace",
+          name: "trace",
+          short: "调用路径耗时",
+          summary: "跟踪目标方法内部一级调用链路，并输出每个节点耗时。",
+          doc: `${DOC}/trace.html`,
+          explain: "trace 用于定位 RT 高的路径。官方说明每次只能 trace 一级调用链路，复杂链路需要逐层定位。",
+          params: [
+            ["class-pattern", "目标 JVM 类名。"],
+            ["method-pattern", "目标方法名。"],
+            ["condition-express", "OGNL 条件，常用 #cost>100。"],
+            ["-n/-m", "限制输出次数、最大匹配类数。"],
+            ["-c", "指定 classloader hash。"],
+          ],
+          build: (c) => join(["trace", `-n ${c.count}`, `-m ${c.maxMatch}`, c.loaderOpt("-c"), c.cls, c.method, c.condition && quote(c.condition)]),
+        },
+        {
+          id: "stack",
+          name: "stack",
+          short: "谁调用了它",
+          summary: "命中目标方法时打印当前调用栈。",
+          doc: `${DOC}/stack.html`,
+          explain: "stack 适合回答“这个方法是谁调用的”。可以配合 params 或 #cost 条件减少噪音。",
+          params: [
+            ["class-pattern", "目标 JVM 类名。"],
+            ["method-pattern", "目标方法名。"],
+            ["condition-express", "OGNL 条件，可使用 #cost。"],
+            ["-n/-m/-c", "限制次数、最大匹配类数、classloader hash。"],
+          ],
+          build: (c) => join(["stack", `-n ${c.count}`, `-m ${c.maxMatch}`, c.loaderOpt("-c"), c.cls, c.method, c.condition && quote(c.condition)]),
+        },
+        {
+          id: "monitor",
+          name: "monitor",
+          short: "周期统计",
+          summary: "周期性统计调用次数、成功/失败、平均 RT 和失败率。",
+          doc: `${DOC}/monitor.html`,
+          explain: "monitor 的 -c 是统计周期秒数，不是 classloader。限定 classloader 应使用 --classloader。",
+          params: [
+            ["-c", "统计周期，单位秒。"],
+            ["--classloader", "指定 classloader hash。"],
+            ["class-pattern/method-pattern", "目标类和方法。"],
+            ["condition-express", "OGNL 条件表达式。"],
+          ],
+          build: (c) => join(["monitor", `-c ${c.cycle}`, `-m ${c.maxMatch}`, c.loaderOpt("--classloader"), c.cls, c.method, c.condition && quote(c.condition)]),
+        },
+        {
+          id: "tt",
+          name: "tt",
+          short: "记录调用现场",
+          summary: "记录目标方法调用现场，之后可查看、检索或重放。",
+          doc: `${DOC}/tt.html`,
+          explain: "tt -t 会缓存调用现场。高频方法务必加 -n，排查结束后用 tt --delete-all 清理缓存。",
+          params: [
+            ["-t", "记录调用。"],
+            ["-n", "限制记录次数。"],
+            ["tt -l/-i/-p", "列出、查看、重放记录。"],
+            ["tt --delete-all", "清空缓存。"],
+          ],
+          build: (c) => join(["tt", "-t", `-n ${c.count}`, `-m ${c.maxMatch}`, c.loaderOpt("-c"), c.cls, c.method, c.condition && quote(c.condition)]),
+        },
+        {
+          id: "jad",
+          name: "jad",
+          short: "反编译确认",
+          summary: "反编译 JVM 中实际加载的 class，可确认 Kotlin 编译产物。",
+          doc: `${DOC}/jad.html`,
+          explain: "Kotlin 项目里用 jad 确认 FooKt、Companion、object、$default、invokeSuspend 等真实形态。",
+          params: [
+            ["class-pattern", "要反编译的已加载类。"],
+            ["method", "可选方法名。"],
+            ["-c", "指定 classloader hash。"],
+          ],
+          build: (c) => join(["jad", c.loaderOpt("-c"), c.cls, c.method !== "*" && c.method]),
+        },
+        {
+          id: "sc",
+          name: "sc",
+          short: "查已加载类",
+          summary: "搜索 JVM 已加载类，查看 code source 和 classloader hash。",
+          doc: `${DOC}/sc.html`,
+          explain: "Kotlin 类名不确定时，先用 sc -d 搜索 *Service*、*Kt、*$Companion。",
+          params: [
+            ["-d", "输出详细信息。"],
+            ["-f", "输出字段信息。"],
+            ["class-pattern", "类名匹配表达式。"],
+          ],
+          build: (c) => join(["sc", "-d", c.loaderOpt("-c"), c.cls]),
+        },
+        {
+          id: "sm",
+          name: "sm",
+          short: "查真实方法",
+          summary: "查看已加载类声明的方法信息和签名。",
+          doc: `${DOC}/sm.html`,
+          explain: "命中不到源码方法时，先用 sm -d 确认是否实际调用 $default、Companion、invokeSuspend。",
+          params: [
+            ["-d", "展示方法参数、返回、异常、修饰符。"],
+            ["class-pattern", "目标类。"],
+            ["method-pattern", "方法名，* 表示全部。"],
+          ],
+          build: (c) => join(["sm", "-d", c.loaderOpt("-c"), c.cls, c.method || "*"]),
+        },
+        {
+          id: "ognl",
+          name: "ognl",
+          short: "表达式 / 静态访问",
+          summary: "执行 OGNL 表达式，适合查看静态字段、类元信息或 object 实例。",
+          doc: `${DOC}/ognl.html`,
+          explain: "业务类常要指定 classloader hash。object 可用 @Class@INSTANCE.method() 访问无参方法。",
+          params: [
+            ["express", "OGNL 表达式。"],
+            ["-x", "展开深度。"],
+            ["-c", "指定 classloader hash。"],
+          ],
+          build: (c) => join(["ognl", `-x ${c.expand}`, c.loaderOpt("-c"), quote(ognl(c))]),
+        },
+        {
+          id: "vmtool",
+          name: "vmtool",
+          short: "查堆内对象",
+          summary: "通过 JVMTI 查询实例或触发 GC。",
+          doc: `${DOC}/vmtool.html`,
+          explain: "vmtool --action getInstances 可按 className 查询堆中对象，注意用 --limit 控量。",
+          params: [
+            ["--action getInstances", "查询堆中实例。"],
+            ["--className", "目标 JVM 类名。"],
+            ["--limit", "限制返回数量。"],
+            ["-x", "展开深度。"],
+          ],
+          build: (c) => join(["vmtool", "--action getInstances", c.loaderOpt("-c"), `--className ${c.cls}`, `--limit ${c.count}`, `-x ${c.expand}`]),
+        },
+        {
+          id: "reset",
+          name: "reset",
+          short: "清理增强",
+          summary: "还原被 Arthas 增强过的类。",
+          doc: `${DOC}/reset.html`,
+          explain: "watch/trace/stack/monitor/tt 都会增强字节码，排查结束后建议 reset 指定类。",
+          params: [
+            ["class-pattern", "要还原增强的类。"],
+            ["reset", "不带参数时还原全部增强类。"],
+          ],
+          build: (c) => join(["reset", c.cls]),
+        },
+      ];
+
+      const $ = (id) => document.getElementById(id);
+      const ids = {
+        reference: $("reference"),
+        method: $("method"),
+        kind: $("kind"),
+        packageName: $("packageName"),
+        className: $("className"),
+        classPattern: $("classPattern"),
+        methodPattern: $("methodPattern"),
+        watchExpr: $("watchExpr"),
+        condition: $("condition"),
+        count: $("count"),
+        expand: $("expand"),
+        cycle: $("cycle"),
+        maxMatch: $("maxMatch"),
+        classloader: $("classloader"),
+        watchPoint: $("watchPoint"),
+        commandSelect: $("commandSelect"),
+      };
+
+      const out = {
+        parseState: $("parse-state"),
+        list: $("commandList"),
+        quickTitle: $("quickTitle"),
+        quickCommand: $("quickCommand"),
+        title: $("commandTitle"),
+        summary: $("commandSummary"),
+        command: $("commandOutput"),
+        copyStatus: $("copyStatus"),
+        explain: $("explain"),
+        notes: $("notes"),
+        params: $("params"),
+        doc: $("docLink"),
+      };
+
+      let active = new URLSearchParams(location.search).get("cmd") || localStorage.getItem("arthas-v2-active") || "watch";
+      if (!commands.some((cmd) => cmd.id === active)) active = "watch";
+      let order = safeParse(localStorage.getItem("arthas-v2-order")) || commands.map((cmd) => cmd.id);
+      order = normalizeOrder(order);
+      let lastClass = "";
+      let lastMethod = "";
+      let dragging = null;
+
+      function safeParse(value) {
+        try { return JSON.parse(value || "null"); } catch { return null; }
+      }
+
+      function normalizeOrder(value) {
+        const all = commands.map((cmd) => cmd.id);
+        const known = Array.isArray(value) ? value.filter((id) => all.includes(id)) : [];
+        return [...known, ...all.filter((id) => !known.includes(id))];
+      }
+
+      function commandById(id) {
+        return commands.find((cmd) => cmd.id === id) || commands[0];
+      }
+
+      function join(parts) {
+        return parts.filter((part) => String(part || "").trim()).join(" ");
+      }
+
+      function quote(value) {
+        const raw = String(value || "").trim();
+        if (!raw) return "";
+        if (raw.includes("'") && !raw.includes('"')) return `"${raw}"`;
+        return `'${raw.replaceAll("'", "\\'")}'`;
+      }
+
+      function intValue(id, fallback, min, max = 99999) {
+        const value = Number.parseInt(ids[id].value, 10);
+        if (!Number.isFinite(value)) return fallback;
+        return Math.min(Math.max(value, min), max);
+      }
+
+      function context() {
+        return {
+          cls: ids.classPattern.value.trim() || "<class-pattern>",
+          method: ids.methodPattern.value.trim() || ids.method.value.trim() || "*",
+          watchExpr: ids.watchExpr.value.trim() || "{params, target, returnObj, throwExp}",
+          condition: ids.condition.value.trim(),
+          count: intValue("count", 5, 1),
+          expand: intValue("expand", 2, 1, 4),
+          cycle: intValue("cycle", 5, 1),
+          maxMatch: intValue("maxMatch", 1, 1),
+          classloader: ids.classloader.value.trim(),
+          watchPoint: ids.watchPoint.value,
+          kind: ids.kind.value,
+          loaderOpt(flag) {
+            return this.classloader ? `${flag} ${this.classloader}` : "";
+          },
+        };
+      }
+
+      function ognl(c) {
+        if (c.kind === "topLevel") return `@${c.cls}@${c.method === "*" ? "methodName" : c.method}()`;
+        if (c.kind === "object") return `@${c.cls}@INSTANCE.${c.method === "*" ? "methodName" : c.method}()`;
+        const match = c.cls.match(/^(.+)\$([A-Za-z_$][\w$]*)$/);
+        if (c.kind === "companion" && match) return `@${match[1]}@${match[2]}.${c.method === "*" ? "methodName" : c.method}()`;
+        return `@${c.cls}@class.getDeclaredMethods()`;
+      }
+
+      function parseReference(raw) {
+        const text = String(raw || "").trim();
+        const result = { packageName: "", fileBase: "", className: "", classPattern: "", method: "", message: "等待输入", ok: false };
+        if (!text) return result;
+
+        const methodMatch = text.match(/#([A-Za-z_$<>][\w$<>-]*)/) || text.match(/::([A-Za-z_$<>][\w$<>-]*)/);
+        if (methodMatch) result.method = methodMatch[1];
+
+        const pathMatch = text.match(/([^\s"'`]+\.kt)(?::\d+(?::\d+)?)?/i);
+        if (pathMatch) {
+          const path = pathMatch[1].replace(/\\/g, "/");
+          const file = path.split("/").pop() || "";
+          result.fileBase = file.replace(/\.kt$/i, "");
+          result.className = result.fileBase;
+          result.packageName = packageFromPath(path);
+          result.message = result.packageName ? "已从路径推导包名" : "已识别文件，包名需确认";
+          result.ok = Boolean(result.packageName);
+          return result;
+        }
+
+        const compact = text.split(/\s+/).find((part) => /^[A-Za-z_][\w$]*(?:\.[A-Za-z_$][\w$<>-]*)+$/.test(part.replace(/#.*/, "")));
+        if (compact) {
+          const classRef = compact.replace(/#.*/, "");
+          const normalized = result.method ? classRef : compact.replace("#", ".");
+          const parts = normalized.split(".").filter(Boolean);
+          const last = parts[parts.length - 1] || "";
+          const prev = parts[parts.length - 2] || "";
+          if (!result.method && /^[a-z_]/.test(last) && /^[A-Z_$]/.test(prev)) {
+            result.method = last;
+            result.className = prev;
+            result.packageName = parts.slice(0, -2).join(".");
+            result.classPattern = parts.slice(0, -1).join(".");
+          } else {
+            result.className = last;
+            result.packageName = parts.slice(0, -1).join(".");
+            result.classPattern = normalized;
+          }
+          result.message = "已从类引用推导";
+          result.ok = true;
+          return result;
+        }
+
+        result.message = "无法完整推导，请手动补充";
+        return result;
+      }
+
+      function packageFromPath(path) {
+        const marker = path.match(/(?:^|\/)src\/(?:main|test|androidTest|integrationTest)\/(?:kotlin|java)\//);
+        if (!marker || marker.index === undefined) return "";
+        const relative = path.slice(marker.index + marker[0].length);
+        const parts = relative.split("/");
+        parts.pop();
+        return parts.filter((part) => /^[A-Za-z_][\w]*$/.test(part)).join(".");
+      }
+
+      function infer(force = false) {
+        const parsed = parseReference(ids.reference.value);
+        if (!ids.method.value && parsed.method) ids.method.value = parsed.method;
+        const pkg = (ids.packageName.value || parsed.packageName).trim();
+        const override = ids.className.value.trim().replace(/\.kt$/i, "");
+        let name = override || parsed.className || parsed.fileBase || "";
+        if (ids.kind.value === "topLevel" && !override) name = parsed.fileBase ? `${parsed.fileBase}Kt` : `${name || "File"}Kt`;
+        if (ids.kind.value === "companion" && name && !name.includes("$")) name = `${name}$Companion`;
+        if (ids.kind.value === "interfaceDefault" && name && !name.endsWith("$DefaultImpls")) name = `${name}$DefaultImpls`;
+
+        const inferredClass = parsed.classPattern && ids.kind.value === "member" && !override ? parsed.classPattern : [pkg, name].filter(Boolean).join(".");
+        const inferredMethod = ids.method.value || parsed.method || "*";
+        if (force || !ids.classPattern.value || ids.classPattern.value === lastClass) {
+          ids.classPattern.value = inferredClass;
+          lastClass = inferredClass;
+        }
+        if (force || !ids.methodPattern.value || ids.methodPattern.value === lastMethod) {
+          ids.methodPattern.value = inferredMethod;
+          lastMethod = inferredMethod;
+        }
+        out.parseState.textContent = parsed.message;
+        out.parseState.className = parsed.ok ? "pill ok" : "pill";
+        render();
+      }
+
+      function setActive(id) {
+        if (!commands.some((cmd) => cmd.id === id)) return;
+        active = id;
+        localStorage.setItem("arthas-v2-active", id);
+        const url = new URL(location.href);
+        url.searchParams.set("cmd", id);
+        history.replaceState(null, "", url);
+        render();
+      }
+
+      function renderSelect() {
+        ids.commandSelect.innerHTML = order.map((id) => {
+          const cmd = commandById(id);
+          return `<option value="${cmd.id}">${cmd.name} - ${cmd.short}</option>`;
+        }).join("");
+        ids.commandSelect.value = active;
+      }
+
+      function renderList() {
+        out.list.innerHTML = "";
+        order.forEach((id) => {
+          const cmd = commandById(id);
+          const row = document.createElement("div");
+          row.className = `command-row${id === active ? " active" : ""}`;
+          row.dataset.id = id;
+          row.innerHTML = `
+            <button class="drag" type="button" title="拖拽排序">::</button>
+            <label class="choice">
+              <input type="radio" name="command" value="${cmd.id}" ${cmd.id === active ? "checked" : ""} />
+              <span><span class="name">${cmd.name}</span><span class="desc">${cmd.short}</span></span>
+            </label>
+          `;
+          row.querySelector("input").addEventListener("change", () => setActive(id));
+          row.querySelector(".choice").addEventListener("click", () => setActive(id));
+          row.querySelector(".drag").addEventListener("pointerdown", (event) => {
+            event.preventDefault();
+            dragging = { id, x: event.clientX, y: event.clientY, moved: false };
+          });
+          out.list.appendChild(row);
+        });
+      }
+
+      function render() {
+        const cmd = commandById(active);
+        const c = context();
+        const text = cmd.build(c);
+
+        ids.commandSelect.value = active;
+        out.quickTitle.textContent = cmd.name;
+        out.quickCommand.textContent = text;
+        out.title.textContent = cmd.name;
+        out.summary.textContent = cmd.summary;
+        out.command.textContent = text;
+        out.explain.textContent = cmd.explain;
+        out.doc.href = cmd.doc;
+        out.doc.textContent = `${cmd.name} 官方文档`;
+        out.params.innerHTML = cmd.params.map(([key, value]) => `<tr><td>${key}</td><td>${value}</td></tr>`).join("");
+        out.notes.innerHTML = kotlinNotes(c.kind).map((note) => `<li>${note}</li>`).join("");
+        renderSelect();
+        renderList();
+      }
+
+      function kotlinNotes(kind) {
+        const notes = [
+          "先用 sc -d 和 sm -d 校验 JVM 真实类名/方法名，再运行增强命令。",
+          "顶层函数通常在 FileNameKt；@file:JvmName 会改变 facade 名。",
+          "suspend 方法会多一个 Continuation 参数，默认参数可能走 $default。",
+        ];
+        if (kind === "object") notes.push("object 单例有 INSTANCE 字段，OGNL 可用 @Class@INSTANCE.method()。");
+        if (kind === "companion") notes.push("companion 未加 @JvmStatic 时通常在 Outer$Companion。");
+        if (kind === "topLevel") notes.push("顶层扩展函数的 receiver 通常是 params[0]。");
+        return notes;
+      }
+
+      function moveBefore(sourceId, targetId) {
+        if (!sourceId || !targetId || sourceId === targetId) return;
+        const from = order.indexOf(sourceId);
+        const to = order.indexOf(targetId);
+        if (from < 0 || to < 0) return;
+        order.splice(from, 1);
+        order.splice(to, 0, sourceId);
+        localStorage.setItem("arthas-v2-order", JSON.stringify(order));
+        render();
+      }
+
+      document.addEventListener("pointermove", (event) => {
+        if (!dragging) return;
+        const distance = Math.hypot(event.clientX - dragging.x, event.clientY - dragging.y);
+        if (distance < 8 && !dragging.moved) return;
+        dragging.moved = true;
+        const target = document.elementFromPoint(event.clientX, event.clientY)?.closest(".command-row");
+        if (target) moveBefore(dragging.id, target.dataset.id);
+      });
+
+      document.addEventListener("pointerup", () => {
+        dragging = null;
+      });
+
+      ids.commandSelect.addEventListener("change", () => setActive(ids.commandSelect.value));
+      $("resetOrder").addEventListener("click", () => {
+        order = commands.map((cmd) => cmd.id);
+        localStorage.removeItem("arthas-v2-order");
+        render();
+      });
+      $("infer").addEventListener("click", () => infer(true));
+      $("copy").addEventListener("click", async () => {
+        const text = out.command.textContent;
+        try {
+          await navigator.clipboard.writeText(text);
+          out.copyStatus.textContent = "已复制到剪贴板";
+        } catch {
+          out.copyStatus.textContent = "复制失败，请手动选中命令复制";
+        }
+        setTimeout(() => { out.copyStatus.textContent = ""; }, 1800);
+      });
+
+      ["reference", "method", "kind", "packageName", "className"].forEach((id) => {
+        ids[id].addEventListener("input", () => infer(false));
+        ids[id].addEventListener("change", () => infer(false));
+      });
+      Object.keys(ids).forEach((id) => {
+        if (["reference", "method", "kind", "packageName", "className", "commandSelect"].includes(id)) return;
+        ids[id].addEventListener("input", render);
+        ids[id].addEventListener("change", render);
+      });
+
+      ids.reference.value = "/Users/me/project/src/main/kotlin/com/example/order/OrderService.kt";
+      ids.method.value = "submit";
+      infer(true);
+      render();
+    </script>
+  </body>
+</html>
