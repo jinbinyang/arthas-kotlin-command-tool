@@ -360,6 +360,22 @@
         font-size: 12px;
       }
 
+      .match-limit-choice {
+        align-items: flex-start;
+        margin: 0 0 10px 0;
+      }
+
+      .match-limit-choice .name {
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.35;
+      }
+
+      .match-limit-choice .desc {
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
       .output-head {
         display: flex;
         align-items: center;
@@ -383,6 +399,66 @@
         padding-top: 7px;
         color: var(--accent-2);
         font-size: 13px;
+      }
+
+      .preflight-box {
+        margin-top: 12px;
+        border: 1px solid rgba(15, 118, 110, 0.35);
+        border-radius: 8px;
+        background: #f3fbf9;
+        padding: 12px;
+      }
+
+      .preflight-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .preflight-head h3 {
+        margin: 0;
+        font-size: 14px;
+      }
+
+      .preflight-head p {
+        margin-top: 4px;
+        color: #3f5668;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .preflight-code {
+        display: block;
+        margin: 0;
+        border-radius: 7px;
+        background: #0f172a;
+        color: #e8eef7;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        line-height: 1.5;
+        padding: 12px;
+        font-size: 13px;
+      }
+
+      .candidate-list {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+
+      .candidate-list button {
+        border: 1px solid rgba(15, 118, 110, 0.35);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--accent-2);
+        cursor: pointer;
+        padding: 5px 8px;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 12px;
       }
 
       .details {
@@ -484,7 +560,7 @@
           <p class="subtitle">v2 单文件重做版，命令选择、说明、参数和输出强同步更新</p>
         </div>
       </div>
-      <span class="version">v2-20260609-2</span>
+      <span class="version">v2-20260610-1</span>
     </header>
 
     <main class="layout">
@@ -574,6 +650,10 @@ com.example.order.OrderService.submit"></textarea>
               <input id="maxMatch" type="number" min="1" value="1" />
             </label>
           </div>
+          <label class="choice match-limit-choice">
+            <input id="maxMatchEnabled" type="checkbox" />
+            <span><span class="name">启用 -m 最大匹配类数限制</span><span class="desc">默认关闭。你的场景已验证去掉 -m 才能正常命中，只有确认需要限制 class 匹配数量时再开启。</span></span>
+          </label>
           <div class="grid two">
             <label class="field">
               <span>classloader hash</span>
@@ -624,6 +704,18 @@ com.example.order.OrderService.submit"></textarea>
         <pre id="commandOutput" class="command-code"></pre>
         <div id="copyStatus" class="copy-status"></div>
 
+        <div class="preflight-box">
+          <div class="preflight-head">
+            <div>
+              <h3>未命中排查 / 预检命令</h3>
+              <p><code>Affect(class count: 0)</code> 表示当前 JVM 没匹配到类。先复制下面的 <code>sc/sm</code> 确认真实类名和方法名，再运行 watch/trace。</p>
+            </div>
+            <button id="copyPreflight" class="button small" type="button">复制预检</button>
+          </div>
+          <pre id="preflightOutput" class="preflight-code"></pre>
+          <div id="candidateList" class="candidate-list"></div>
+        </div>
+
         <div class="details">
           <article class="details-box">
             <h3>完整解释</h3>
@@ -666,10 +758,11 @@ com.example.order.OrderService.submit"></textarea>
             ["method-pattern", "目标方法名，可用 *。"],
             ["express", "观察表达式，默认 {params, target, returnObj, throwExp}。"],
             ["-b/-s/-e/-f", "进入前、正常返回、异常、结束后观察。"],
-            ["-n/-x/-m", "限制次数、展开深度、最大匹配类数。"],
+            ["-n/-x", "限制次数、展开深度。"],
+            ["-m", "最大匹配类数限制。默认不生成；某些场景下 -m 1 会导致无法命中，确认需要时再开启。"],
             ["-c", "指定 classloader hash。"],
           ],
-          build: (c) => join(["watch", c.watchPoint, `-n ${c.count}`, `-x ${c.expand}`, `-m ${c.maxMatch}`, c.loaderOpt("-c"), c.cls, c.method, quote(c.watchExpr), c.condition && quote(c.condition)]),
+          build: (c) => join(["watch", c.watchPoint, `-n ${c.count}`, `-x ${c.expand}`, c.matchOpt(), c.loaderOpt("-c"), c.cls, c.method, quote(c.watchExpr), c.condition && quote(c.condition)]),
         },
         {
           id: "trace",
@@ -682,10 +775,11 @@ com.example.order.OrderService.submit"></textarea>
             ["class-pattern", "目标 JVM 类名。"],
             ["method-pattern", "目标方法名。"],
             ["condition-express", "OGNL 条件，常用 #cost>100。"],
-            ["-n/-m", "限制输出次数、最大匹配类数。"],
+            ["-n", "限制输出次数。"],
+            ["-m", "最大匹配类数限制。默认不生成；确认需要时再开启。"],
             ["-c", "指定 classloader hash。"],
           ],
-          build: (c) => join(["trace", `-n ${c.count}`, `-m ${c.maxMatch}`, c.loaderOpt("-c"), c.cls, c.method, c.condition && quote(c.condition)]),
+          build: (c) => join(["trace", `-n ${c.count}`, c.matchOpt(), c.loaderOpt("-c"), c.cls, c.method, c.condition && quote(c.condition)]),
         },
         {
           id: "stack",
@@ -698,9 +792,10 @@ com.example.order.OrderService.submit"></textarea>
             ["class-pattern", "目标 JVM 类名。"],
             ["method-pattern", "目标方法名。"],
             ["condition-express", "OGNL 条件，可使用 #cost。"],
-            ["-n/-m/-c", "限制次数、最大匹配类数、classloader hash。"],
+            ["-n/-c", "限制次数、classloader hash。"],
+            ["-m", "最大匹配类数限制。默认不生成；确认需要时再开启。"],
           ],
-          build: (c) => join(["stack", `-n ${c.count}`, `-m ${c.maxMatch}`, c.loaderOpt("-c"), c.cls, c.method, c.condition && quote(c.condition)]),
+          build: (c) => join(["stack", `-n ${c.count}`, c.matchOpt(), c.loaderOpt("-c"), c.cls, c.method, c.condition && quote(c.condition)]),
         },
         {
           id: "monitor",
@@ -715,7 +810,7 @@ com.example.order.OrderService.submit"></textarea>
             ["class-pattern/method-pattern", "目标类和方法。"],
             ["condition-express", "OGNL 条件表达式。"],
           ],
-          build: (c) => join(["monitor", `-c ${c.cycle}`, `-m ${c.maxMatch}`, c.loaderOpt("--classloader"), c.cls, c.method, c.condition && quote(c.condition)]),
+          build: (c) => join(["monitor", `-c ${c.cycle}`, c.matchOpt(), c.loaderOpt("--classloader"), c.cls, c.method, c.condition && quote(c.condition)]),
         },
         {
           id: "tt",
@@ -730,7 +825,7 @@ com.example.order.OrderService.submit"></textarea>
             ["tt -l/-i/-p", "列出、查看、重放记录。"],
             ["tt --delete-all", "清空缓存。"],
           ],
-          build: (c) => join(["tt", "-t", `-n ${c.count}`, `-m ${c.maxMatch}`, c.loaderOpt("-c"), c.cls, c.method, c.condition && quote(c.condition)]),
+          build: (c) => join(["tt", "-t", `-n ${c.count}`, c.matchOpt(), c.loaderOpt("-c"), c.cls, c.method, c.condition && quote(c.condition)]),
         },
         {
           id: "jad",
@@ -833,6 +928,7 @@ com.example.order.OrderService.submit"></textarea>
         expand: $("expand"),
         cycle: $("cycle"),
         maxMatch: $("maxMatch"),
+        maxMatchEnabled: $("maxMatchEnabled"),
         classloader: $("classloader"),
         watchPoint: $("watchPoint"),
         commandSelect: $("commandSelect"),
@@ -847,6 +943,8 @@ com.example.order.OrderService.submit"></textarea>
         summary: $("commandSummary"),
         command: $("commandOutput"),
         copyStatus: $("copyStatus"),
+        preflight: $("preflightOutput"),
+        candidates: $("candidateList"),
         explain: $("explain"),
         notes: $("notes"),
         params: $("params"),
@@ -886,6 +984,12 @@ com.example.order.OrderService.submit"></textarea>
         return `'${raw.replaceAll("'", "\\'")}'`;
       }
 
+      function arthasPattern(value) {
+        const raw = String(value || "").trim();
+        if (!raw) return "";
+        return /[*$<>\s]/.test(raw) ? quote(raw) : raw;
+      }
+
       function intValue(id, fallback, min, max = 99999) {
         const value = Number.parseInt(ids[id].value, 10);
         if (!Number.isFinite(value)) return fallback;
@@ -902,9 +1006,13 @@ com.example.order.OrderService.submit"></textarea>
           expand: intValue("expand", 2, 1, 4),
           cycle: intValue("cycle", 5, 1),
           maxMatch: intValue("maxMatch", 1, 1),
+          maxMatchEnabled: ids.maxMatchEnabled.checked,
           classloader: ids.classloader.value.trim(),
           watchPoint: ids.watchPoint.value,
           kind: ids.kind.value,
+          matchOpt() {
+            return this.maxMatchEnabled ? `-m ${this.maxMatch}` : "";
+          },
           loaderOpt(flag) {
             return this.classloader ? `${flag} ${this.classloader}` : "";
           },
@@ -917,6 +1025,50 @@ com.example.order.OrderService.submit"></textarea>
         const match = c.cls.match(/^(.+)\$([A-Za-z_$][\w$]*)$/);
         if (c.kind === "companion" && match) return `@${match[1]}@${match[2]}.${c.method === "*" ? "methodName" : c.method}()`;
         return `@${c.cls}@class.getDeclaredMethods()`;
+      }
+
+      function classParts(classPattern) {
+        const cls = String(classPattern || "").trim();
+        const cleaned = cls.replace(/^['"]|['"]$/g, "");
+        const withoutWildcard = cleaned.replace(/^\*+|\*+$/g, "");
+        const parts = withoutWildcard.split(".").filter(Boolean);
+        const simple = parts.pop() || withoutWildcard || "TargetClass";
+        const pkg = parts.join(".");
+        const baseSimple = simple
+          .replace(/\$Companion$/, "")
+          .replace(/\$DefaultImpls$/, "")
+          .replace(/Kt$/, "");
+        return { cls: cleaned, pkg, simple, baseSimple };
+      }
+
+      function classCandidates(c) {
+        const p = classParts(c.cls);
+        const full = p.pkg ? `${p.pkg}.${p.baseSimple}` : p.baseSimple;
+        const candidates = [
+          c.cls,
+          `*${p.baseSimple}*`,
+          full,
+          p.pkg ? `${p.pkg}.${p.baseSimple}Kt` : `${p.baseSimple}Kt`,
+          p.pkg ? `${p.pkg}.${p.baseSimple}$Companion` : `${p.baseSimple}$Companion`,
+          p.pkg ? `${p.pkg}.${p.baseSimple}$DefaultImpls` : `${p.baseSimple}$DefaultImpls`,
+        ];
+        return [...new Set(candidates.filter(Boolean))];
+      }
+
+      function preflightCommands(c) {
+        const p = classParts(c.cls);
+        const method = c.method && c.method !== "*" ? c.method : "*";
+        const methodWildcard = method === "*" ? "*" : `*${method}*`;
+        const simplePattern = `*${p.baseSimple}*`;
+        const lines = [
+          `sc -d ${arthasPattern(c.cls)}`,
+          `sm -d ${arthasPattern(c.cls)} ${arthasPattern(method)}`,
+          `sc -d ${arthasPattern(simplePattern)}`,
+          `sm -d ${arthasPattern(simplePattern)} ${arthasPattern(methodWildcard)}`,
+        ];
+        if (!String(c.cls).endsWith("Kt")) lines.push(`sc -d ${arthasPattern(`${p.pkg ? `${p.pkg}.` : ""}${p.baseSimple}Kt`)}`);
+        if (!String(c.cls).includes("$Companion")) lines.push(`sc -d ${arthasPattern(`${p.pkg ? `${p.pkg}.` : ""}${p.baseSimple}$Companion`)}`);
+        return [...new Set(lines)];
       }
 
       function parseReference(raw) {
@@ -1057,8 +1209,25 @@ com.example.order.OrderService.submit"></textarea>
         out.doc.textContent = `${cmd.name} 官方文档`;
         out.params.innerHTML = cmd.params.map(([key, value]) => `<tr><td>${key}</td><td>${value}</td></tr>`).join("");
         out.notes.innerHTML = kotlinNotes(c.kind).map((note) => `<li>${note}</li>`).join("");
+        renderPreflight(c);
         renderSelect();
         renderList();
+      }
+
+      function renderPreflight(c) {
+        out.preflight.textContent = preflightCommands(c).join("\n");
+        out.candidates.innerHTML = "";
+        classCandidates(c).forEach((candidate) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.textContent = candidate;
+          button.title = "填入 class-pattern";
+          button.addEventListener("click", () => {
+            ids.classPattern.value = candidate;
+            render();
+          });
+          out.candidates.appendChild(button);
+        });
       }
 
       function kotlinNotes(kind) {
@@ -1111,6 +1280,16 @@ com.example.order.OrderService.submit"></textarea>
           out.copyStatus.textContent = "已复制到剪贴板";
         } catch {
           out.copyStatus.textContent = "复制失败，请手动选中命令复制";
+        }
+        setTimeout(() => { out.copyStatus.textContent = ""; }, 1800);
+      });
+      $("copyPreflight").addEventListener("click", async () => {
+        const text = out.preflight.textContent;
+        try {
+          await navigator.clipboard.writeText(text);
+          out.copyStatus.textContent = "已复制预检命令";
+        } catch {
+          out.copyStatus.textContent = "复制失败，请手动选中预检命令复制";
         }
         setTimeout(() => { out.copyStatus.textContent = ""; }, 1800);
       });

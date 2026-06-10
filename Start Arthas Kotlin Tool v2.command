@@ -3,7 +3,7 @@ set -e
 
 TOOL_DIR="$(cd "$(dirname "$0")" && pwd)"
 PORT="${ARTHAS_KOTLIN_TOOL_V2_PORT:-8766}"
-URL="http://127.0.0.1:${PORT}/index.html?v=v2-20260609-2"
+URL="http://127.0.0.1:${PORT}/index.html?v=v2-20260610-1"
 
 cd "$TOOL_DIR"
 
