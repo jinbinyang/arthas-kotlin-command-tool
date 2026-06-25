@@ -258,6 +258,70 @@
         margin-bottom: 10px;
       }
 
+      .category-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .category-button {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        align-items: center;
+        min-height: 44px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: #fff;
+        color: var(--text);
+        cursor: pointer;
+        padding: 8px 9px;
+        text-align: left;
+      }
+
+      .category-button:hover {
+        border-color: rgba(15, 118, 110, 0.55);
+      }
+
+      .category-button.active {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        color: var(--accent-2);
+        box-shadow: inset 4px 0 0 var(--accent);
+      }
+
+      .cat-name {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .cat-count {
+        border-radius: 999px;
+        background: #edf2f7;
+        color: var(--muted);
+        padding: 2px 7px;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .category-button.active .cat-count {
+        background: #fff;
+        color: var(--accent-2);
+      }
+
+      .command-filter {
+        margin-bottom: 10px;
+      }
+
+      .command-filter input {
+        padding: 8px 10px;
+      }
+
       .quick-box {
         display: grid;
         gap: 8px;
@@ -317,6 +381,16 @@
         border-color: var(--accent);
         background: #cceee8;
         box-shadow: inset 4px 0 0 var(--accent);
+      }
+
+      .empty-state {
+        border: 1px dashed var(--border);
+        border-radius: 8px;
+        background: #fff;
+        color: var(--muted);
+        padding: 14px;
+        text-align: center;
+        font-size: 13px;
       }
 
       .drag {
@@ -549,27 +623,497 @@
           grid-template-columns: 1fr;
         }
       }
+
+      :root {
+        color-scheme: light;
+        --line: #d7dee8;
+        --strong-line: #b8c3d3;
+        --shadow: 0 12px 32px rgba(16, 24, 40, 0.10);
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        font-family: var(--sans);
+        letter-spacing: 0;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        letter-spacing: 0;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 250px minmax(520px, 1fr);
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        border-right: 1px solid var(--line);
+        background: #f5f8fb;
+        padding: 18px 14px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow: auto;
+      }
+
+      .sidebar .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 2px 4px 16px;
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 14px;
+      }
+
+      .sidebar .mark {
+        width: 38px;
+        height: 38px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        background: var(--accent);
+        box-shadow: inset 0 -10px 18px rgba(0, 0, 0, 0.12);
+        flex: 0 0 auto;
+        font-size: 13px;
+      }
+
+      .brand-name {
+        font-size: 15px;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+
+      .brand-sub {
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .side-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        margin: 14px 4px 8px;
+      }
+
+      .sidebar .category-list {
+        grid-template-columns: 1fr;
+        gap: 7px;
+        margin-bottom: 0;
+      }
+
+      .category-button {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 28px 1fr auto;
+        align-items: center;
+        gap: 9px;
+        min-height: 46px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--text);
+        padding: 9px;
+        transition: background .12s ease, border-color .12s ease, transform .12s ease;
+      }
+
+      .category-button:hover {
+        background: #eaf7f4;
+        border-color: #bfe4dc;
+      }
+
+      .category-button.active {
+        background: var(--accent-soft);
+        border-color: rgba(15, 118, 110, .42);
+        color: var(--accent-2);
+        box-shadow: 0 1px 0 rgba(15, 118, 110, .14);
+      }
+
+      .cat-icon {
+        display: grid;
+        width: 28px;
+        height: 28px;
+        place-items: center;
+        border-radius: 7px;
+        background: #dff3ef;
+        color: var(--accent-2);
+        font-size: 11px;
+        font-weight: 850;
+        line-height: 1;
+      }
+
+      .cat-name {
+        font-size: 13px;
+        font-weight: 750;
+        line-height: 1.22;
+      }
+
+      .cat-count {
+        border-radius: 0;
+        background: transparent;
+        color: var(--muted);
+        padding: 0;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .category-button.active .cat-count {
+        background: transparent;
+        color: var(--accent-2);
+      }
+
+      .main {
+        padding: 20px 22px 24px;
+        overflow: auto;
+      }
+
+      .main-inner {
+        max-width: 1250px;
+        margin: 0 auto;
+        display: grid;
+        gap: 16px;
+      }
+
+      .topbar {
+        display: grid;
+        grid-template-columns: minmax(280px, 1fr) auto;
+        gap: 14px;
+        align-items: start;
+      }
+
+      h1 {
+        font-size: 25px;
+        line-height: 1.18;
+      }
+
+      .lead {
+        margin: 7px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .top-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .version {
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        color: var(--muted);
+        padding: 8px 10px;
+        font-size: 12px;
+        font-weight: 750;
+      }
+
+      .doc-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        color: var(--accent-2);
+        padding: 8px 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .section {
+        min-width: 0;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      .section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .section-title {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .section-note {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .input-body {
+        padding: 16px;
+      }
+
+      label.field {
+        margin-bottom: 12px;
+      }
+
+      .field span {
+        color: #344054;
+        font-size: 12px;
+        font-weight: 750;
+      }
+
+      input,
+      select,
+      textarea {
+        border-color: var(--strong-line);
+        border-radius: 8px;
+        min-height: 38px;
+      }
+
+      textarea {
+        font-family: var(--mono);
+        font-size: 12px;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(15, 118, 110, .14);
+      }
+
+      .target-box,
+      .quick-box,
+      .details-box {
+        border-color: var(--line);
+        border-radius: 8px;
+        background: var(--panel-2);
+      }
+
+      .command-area {
+        display: grid;
+        grid-template-columns: 300px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+      }
+
+      .command-panel {
+        position: sticky;
+        top: 16px;
+        padding: 12px;
+        max-height: calc(100vh - 32px);
+        overflow: auto;
+      }
+
+      .command-panel .panel-title {
+        margin-bottom: 12px;
+      }
+
+      .command-filter {
+        margin-bottom: 10px;
+      }
+
+      .quick-box {
+        margin-bottom: 12px;
+      }
+
+      .command-row {
+        border-color: transparent;
+        background: transparent;
+        padding: 9px 8px;
+        min-height: 54px;
+        transition: background .12s ease, border-color .12s ease, transform .12s ease;
+      }
+
+      .command-row:hover {
+        background: #eaf7f4;
+        border-color: #bfe4dc;
+      }
+
+      .command-row.active {
+        border-color: rgba(15, 118, 110, .42);
+        background: var(--accent-soft);
+        box-shadow: 0 1px 0 rgba(15, 118, 110, .14);
+      }
+
+      .drag {
+        width: 24px;
+        height: 24px;
+        line-height: 1;
+        font-size: 16px;
+      }
+
+      .name {
+        font-size: 13px;
+        font-weight: 750;
+      }
+
+      .desc {
+        margin-top: 4px;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      .output-panel {
+        padding: 0;
+      }
+
+      .output-head {
+        margin-bottom: 0;
+        padding: 16px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .output-head h2 {
+        font-size: 18px;
+      }
+
+      .command-code {
+        margin: 16px 16px 0;
+        font-family: var(--mono);
+        font-size: 13px;
+        line-height: 1.55;
+        overflow-wrap: anywhere;
+      }
+
+      .copy-status {
+        min-height: 24px;
+        padding: 7px 16px 0;
+      }
+
+      .preflight-box {
+        margin: 12px 16px 0;
+        border-color: rgba(15, 118, 110, .35);
+      }
+
+      .details {
+        margin: 12px 16px 0;
+      }
+
+      .output-panel > .details-box {
+        margin: 12px 16px 16px !important;
+      }
+
+      .details-box p,
+      .details-box li {
+        font-size: 13px;
+      }
+
+      table {
+        margin-top: 12px;
+      }
+
+      @media (max-width: 980px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar,
+        .command-panel {
+          position: static;
+          height: auto;
+          max-height: none;
+        }
+
+        .sidebar {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .sidebar .category-list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .command-area {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .main {
+          padding: 16px 12px 20px;
+        }
+
+        .topbar {
+          grid-template-columns: 1fr;
+        }
+
+        .top-actions {
+          justify-content: flex-start;
+        }
+
+        .grid.two,
+        .grid.four,
+        .details {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .sidebar .category-list {
+          grid-template-columns: 1fr;
+        }
+      }
     </style>
   </head>
   <body>
-    <header class="top">
-      <div class="brand">
-        <div class="mark">AK</div>
-        <div>
-          <h1>Arthas Kotlin 命令生成器</h1>
-          <p class="subtitle">v2 单文件重做版，命令选择、说明、参数和输出强同步更新</p>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="mark">AK</div>
+          <div>
+            <div class="brand-name">Arthas Kotlin Tool</div>
+            <div class="brand-sub">Arthas 命令生成器</div>
+          </div>
         </div>
-      </div>
-      <span class="version">v2-20260610-1</span>
-    </header>
 
-    <main class="layout">
-      <section class="panel input-panel">
-        <div class="panel-title">
-          <h2>目标方法</h2>
+        <div class="side-label">分类</div>
+        <div id="categoryList" class="category-list"></div>
+      </aside>
+
+      <main class="main">
+        <div class="main-inner">
+          <div class="topbar">
+            <div>
+              <h1>自动生成 Arthas Kotlin 排查命令</h1>
+              <p class="lead">填写 IDEA Copy Reference、Kotlin 场景和通用参数，选择左侧分类与命令，下面会生成可直接粘贴运行的 Arthas 命令。</p>
+            </div>
+            <div class="top-actions">
+              <span class="version">v2-20260625-4</span>
+              <a class="doc-link" href="https://arthas.aliyun.com/doc/commands.html" target="_blank" rel="noreferrer">官方 Arthas Commands</a>
+            </div>
+          </div>
+
+      <section class="section input-panel">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">目标方法</h2>
+            <div class="section-note">路径、类名和方法名用于生成 class-pattern / method-pattern。</div>
+          </div>
           <span id="parse-state" class="pill">等待输入</span>
         </div>
-
+        <div class="input-body">
         <label class="field">
           <span>IDEA Copy Reference / Kotlin 文件路径 / 类名</span>
           <textarea id="reference" spellcheck="false" placeholder="/Users/me/project/src/main/kotlin/com/example/order/OrderService.kt
@@ -670,14 +1214,45 @@ com.example.order.OrderService.submit"></textarea>
               </select>
             </label>
           </div>
+          <div class="grid two">
+            <label class="field">
+              <span>路径 / file / output</span>
+              <input id="pathInput" spellcheck="false" placeholder="arthas-output/dump.hprof / /tmp/profile.html" />
+            </label>
+            <label class="field">
+              <span>thread id / job id</span>
+              <input id="threadId" spellcheck="false" placeholder="1 / 23" />
+            </label>
+          </div>
+          <div class="grid two">
+            <label class="field">
+              <span>名称 / key / field</span>
+              <input id="nameArg" spellcheck="false" placeholder="loggerName / sysprop / staticField" />
+            </label>
+            <label class="field">
+              <span>值 / value</span>
+              <input id="valueArg" spellcheck="false" placeholder="DEBUG / true / password" />
+            </label>
+          </div>
+          <label class="field">
+            <span>附加参数 / extra args</span>
+            <input id="extraArgs" spellcheck="false" placeholder="--live / --event alloc / -b / --format md" />
+          </label>
         </details>
+        </div>
       </section>
 
-      <aside class="panel command-panel">
+      <div class="command-area">
+      <aside class="section command-panel">
         <div class="panel-title">
           <h2>命令</h2>
-          <span class="pill">拖拽手柄排序</span>
+          <span class="pill">分类内拖拽排序</span>
         </div>
+
+        <label class="field command-filter">
+          <span>搜索当前分类</span>
+          <input id="commandFilter" spellcheck="false" placeholder="watch / heap / logger" />
+        </label>
 
         <div class="command-select-row">
           <select id="commandSelect" aria-label="选择命令"></select>
@@ -692,7 +1267,7 @@ com.example.order.OrderService.submit"></textarea>
         <div id="commandList" class="command-list"></div>
       </aside>
 
-      <section class="panel output-panel">
+      <section class="section output-panel">
         <div class="output-head">
           <div>
             <h2 id="commandTitle">watch</h2>
@@ -740,10 +1315,26 @@ com.example.order.OrderService.submit"></textarea>
           </table>
         </div>
       </section>
-    </main>
+      </div>
+        </div>
+      </main>
+    </div>
 
     <script>
       const DOC = "https://arthas.aliyun.com/doc";
+      const CATEGORY_KEY = "arthas-v2-category";
+      const ORDER_KEY = "arthas-v2-order-by-category";
+      const LEGACY_ORDER_KEY = "arthas-v2-order";
+
+      const categories = [
+        { id: "observe", name: "监控跟踪", icon: "WT" },
+        { id: "jvm", name: "JVM 状态", icon: "JV" },
+        { id: "class", name: "类 / 类加载", icon: "CL" },
+        { id: "profiler", name: "Profiler / JFR", icon: "PF" },
+        { id: "session", name: "会话 / 配置", icon: "SE" },
+        { id: "pipe", name: "文件 / 管道", icon: "IO" },
+        { id: "async", name: "异步任务", icon: "BG" },
+      ];
 
       const commands = [
         {
@@ -911,7 +1502,671 @@ com.example.order.OrderService.submit"></textarea>
           ],
           build: (c) => join(["reset", c.cls]),
         },
+        {
+          id: "line",
+          name: "line",
+          short: "源码行观测",
+          summary: "在指定类的方法源码行附近观测入参、局部变量和表达式结果。",
+          doc: `${DOC}/line.html`,
+          explain: "line 适合在 watch 看不到局部变量时按行号或 LineCode 观测方法内部状态。它同样属于字节码增强命令，排查结束后要 reset。",
+          params: [
+            ["class-pattern", "目标 JVM 类名。"],
+            ["method-pattern", "目标方法名。"],
+            ["line / LineCode", "填在附加参数里，例如 338 或 LineCode。"],
+            ["-n/-x", "限制次数、展开深度。"],
+            ["-c", "指定 classloader hash。"],
+          ],
+          build: (c) => join(["line", `-n ${c.count}`, `-x ${c.expand}`, c.loaderOpt("-c"), c.cls, c.method, c.extra || "<line-number>"]),
+        },
+        {
+          id: "dashboard",
+          name: "dashboard",
+          short: "实时总览",
+          summary: "查看线程、内存、GC、运行时等实时数据。",
+          doc: `${DOC}/dashboard.html`,
+          explain: "dashboard 是 JVM 运行状态总览，适合先看 CPU 高、GC 频繁、内存紧张或线程活跃情况。",
+          params: [
+            ["-i", "刷新间隔，单位毫秒；这里用周期秒数换算。"],
+            ["-n", "执行次数。"],
+          ],
+          build: (c) => join(["dashboard", `-i ${c.cycle * 1000}`, `-n ${c.count}`]),
+        },
+        {
+          id: "thread",
+          name: "thread",
+          short: "线程诊断",
+          summary: "查看线程列表、线程栈和 CPU 占用最高线程。",
+          doc: `${DOC}/thread.html`,
+          explain: "thread 常用于 CPU 飙高、线程阻塞、死锁排查。未填 thread id 时默认生成 CPU Top 线程命令。",
+          params: [
+            ["thread id", "可选；填了会查看指定线程栈。"],
+            ["-n", "不填 thread id 时默认输出 CPU Top 线程数量。"],
+            ["extra", "可填 -b 查阻塞线程，或 --state RUNNABLE 等参数。"],
+          ],
+          build: (c) => join(["thread", c.threadId || "-n 5", c.extra]),
+        },
+        {
+          id: "thread-block",
+          name: "thread -b",
+          short: "阻塞线程",
+          summary: "查找当前阻塞其他线程的线程。",
+          doc: `${DOC}/thread.html`,
+          explain: "thread -b 适合排查锁等待、死锁和线程阻塞来源。",
+          params: [["-b", "找出当前阻塞其他线程的线程。"]],
+          build: () => "thread -b",
+        },
+        {
+          id: "jvm",
+          name: "jvm",
+          short: "JVM 信息",
+          summary: "查看 JVM 参数、classpath、启动参数、运行时信息等。",
+          doc: `${DOC}/jvm.html`,
+          explain: "jvm 命令适合确认启动参数、类路径、JDK 版本、JVM flags、PID、运行时间等基础信息。",
+          params: [["jvm", "无参数，输出 JVM 运行信息。"]],
+          build: () => "jvm",
+        },
+        {
+          id: "memory",
+          name: "memory",
+          short: "内存信息",
+          summary: "查看 heap、non-heap、metaspace 等内存使用。",
+          doc: `${DOC}/memory.html`,
+          explain: "memory 用于快速查看堆、非堆、Metaspace、各内存池占用情况。",
+          params: [["memory", "无参数，输出 JVM memory 信息。"]],
+          build: () => "memory",
+        },
+        {
+          id: "heapdump",
+          name: "heapdump",
+          short: "堆转储",
+          summary: "生成 hprof heap dump 文件。",
+          doc: `${DOC}/heapdump.html`,
+          explain: "heapdump 用于内存泄漏和大对象分析。可在附加参数中填 --live 只 dump 存活对象。",
+          params: [
+            ["path", "heap dump 输出路径，默认 arthas-output/dump.hprof。"],
+            ["--live", "可在附加参数中填写，只 dump live objects。"],
+          ],
+          build: (c) => join(["heapdump", c.extra, arg(c.path || "arthas-output/dump.hprof")]),
+        },
+        {
+          id: "logger",
+          name: "logger",
+          short: "查看 Logger",
+          summary: "查看 logger 信息和 classloader。",
+          doc: `${DOC}/logger.html`,
+          explain: "logger 可查看日志框架、logger 名称、level、appender 和 classloader 信息。",
+          params: [
+            ["name", "可选 logger name。"],
+            ["-c", "指定 classloader hash。"],
+          ],
+          build: (c) => join(["logger", c.nameArg && `--name ${arg(c.nameArg)}`, c.loaderOpt("-c"), c.extra]),
+        },
+        {
+          id: "logger-set",
+          name: "logger set",
+          short: "修改日志级别",
+          summary: "临时修改指定 logger 的日志级别。",
+          doc: `${DOC}/logger.html`,
+          explain: "logger --name --level 可在线临时调高或调低日志级别，常用于不重启打开 DEBUG。",
+          params: [
+            ["--name", "logger 名称，填在“名称 / key / field”。"],
+            ["--level", "目标级别，填在“值 / value”，如 DEBUG、INFO、WARN。"],
+            ["-c", "必要时指定 classloader hash。"],
+          ],
+          build: (c) => join(["logger", "--name", arg(c.nameArg || "<logger-name>"), "--level", arg(c.valueArg || "DEBUG"), c.loaderOpt("-c")]),
+        },
+        {
+          id: "sysprop",
+          name: "sysprop",
+          short: "系统属性",
+          summary: "查看或修改 Java system properties。",
+          doc: `${DOC}/sysprop.html`,
+          explain: "sysprop 不带参数会列出所有系统属性；填 key 可查看单项；同时填 value 可修改。",
+          params: [
+            ["name", "系统属性 key。"],
+            ["value", "可选；填了会修改该属性。"],
+          ],
+          build: (c) => join(["sysprop", c.nameArg, c.valueArg && arg(c.valueArg)]),
+        },
+        {
+          id: "sysenv",
+          name: "sysenv",
+          short: "环境变量",
+          summary: "查看系统环境变量。",
+          doc: `${DOC}/sysenv.html`,
+          explain: "sysenv 用于查看目标 JVM 进程可见的环境变量；填名称时只查看指定变量。",
+          params: [["name", "可选环境变量名。"]],
+          build: (c) => join(["sysenv", c.nameArg]),
+        },
+        {
+          id: "vmoption",
+          name: "vmoption",
+          short: "VM 诊断选项",
+          summary: "查看或修改 JVM diagnostic options。",
+          doc: `${DOC}/vmoption.html`,
+          explain: "vmoption 可查看/修改 HotSpot diagnostic options，例如 PrintGC、HeapDumpOnOutOfMemoryError 等。",
+          params: [
+            ["name", "可选 VM option 名称。"],
+            ["value", "可选；填了会尝试修改该 option。"],
+          ],
+          build: (c) => join(["vmoption", c.nameArg, c.valueArg]),
+        },
+        {
+          id: "mbean",
+          name: "mbean",
+          short: "MBean 信息",
+          summary: "查看或调用 MBean 属性和操作。",
+          doc: `${DOC}/mbean.html`,
+          explain: "mbean 用于查看 JMX MBean 信息。可在名称里填 object name，附加参数里填属性或操作参数。",
+          params: [
+            ["name", "MBean object name。"],
+            ["extra", "属性名、操作名或其他 mbean 参数。"],
+          ],
+          build: (c) => join(["mbean", c.nameArg || "", c.extra]),
+        },
+        {
+          id: "perfcounter",
+          name: "perfcounter",
+          short: "Perf Counter",
+          summary: "查看 JVM Perf Counter 信息。",
+          doc: `${DOC}/perfcounter.html`,
+          explain: "perfcounter 输出 JVM 内部 Perf Counter，适合补充观察 GC、类加载、JIT 等指标。",
+          params: [["perfcounter", "无参数。"]],
+          build: () => "perfcounter",
+        },
+        {
+          id: "getstatic",
+          name: "getstatic",
+          short: "静态字段",
+          summary: "读取已加载类的 static 字段。",
+          doc: `${DOC}/getstatic.html`,
+          explain: "getstatic 适合读取普通 static 字段；Kotlin object/companion 场景也可以用 ognl 更灵活地访问。",
+          params: [
+            ["class-pattern", "目标类。"],
+            ["field", "静态字段名，填在“名称 / key / field”。"],
+            ["-x", "展开深度。"],
+            ["-c", "指定 classloader hash。"],
+          ],
+          build: (c) => join(["getstatic", c.loaderOpt("-c"), c.cls, c.nameArg || "<field-name>", `-x ${c.expand}`]),
+        },
+        {
+          id: "classloader",
+          name: "classloader",
+          short: "ClassLoader",
+          summary: "查看 classloader 树、urls、加载类数量等信息。",
+          doc: `${DOC}/classloader.html`,
+          explain: "classloader 用于排查类加载冲突、同名类来源、指定 classloader hash。默认生成 -l 列出 classloader。",
+          params: [
+            ["-l", "列出 classloader。"],
+            ["-c", "指定 classloader hash。"],
+            ["extra", "可填 -t、--all、-a 等参数。"],
+          ],
+          build: (c) => join(["classloader", c.loaderOpt("-c"), c.extra || "-l"]),
+        },
+        {
+          id: "classloader-resource",
+          name: "classloader -r",
+          short: "查资源来源",
+          summary: "通过 classloader 查找资源 URL。",
+          doc: `${DOC}/classloader.html`,
+          explain: "classloader -r 可查某个资源从哪个 classloader/resource URL 加载，适合排查配置文件或 class 资源冲突。",
+          params: [
+            ["path", "资源路径，如 META-INF/MANIFEST.MF 或 com/foo/Bar.class。"],
+            ["-c", "指定 classloader hash。"],
+          ],
+          build: (c) => join(["classloader", c.loaderOpt("-c"), "-r", arg(c.path || "META-INF/MANIFEST.MF")]),
+        },
+        {
+          id: "classloader-metaspace",
+          name: "classloader-metaspace",
+          short: "Metaspace 按 loader",
+          summary: "按 ClassLoader 查看 Metaspace / class metadata 占用。",
+          doc: `${DOC}/classloader-metaspace.html`,
+          explain: "classloader-metaspace 适合排查类加载过多、Metaspace 增长、热部署泄漏等问题。",
+          params: [["extra", "可填官方支持的过滤或排序参数。"]],
+          build: (c) => join(["classloader-metaspace", c.extra]),
+        },
+        {
+          id: "dump",
+          name: "dump",
+          short: "导出 class 字节码",
+          summary: "dump JVM 中已加载类的 bytecode 到文件。",
+          doc: `${DOC}/dump.html`,
+          explain: "dump 可把目标 JVM 实际加载的 class 导出来，对比线上字节码和本地编译结果。",
+          params: [
+            ["class-pattern", "目标类。"],
+            ["path", "输出目录，默认 arthas-output/classes。"],
+            ["-c", "指定 classloader hash。"],
+          ],
+          build: (c) => join(["dump", c.loaderOpt("-c"), "-d", arg(c.path || "arthas-output/classes"), c.cls]),
+        },
+        {
+          id: "mc",
+          name: "mc",
+          short: "内存编译",
+          summary: "编译 Java 源文件为 class 文件。",
+          doc: `${DOC}/mc.html`,
+          explain: "mc 是 Arthas memory compiler，常和 redefine/retransform 配合做临时热修或验证。",
+          params: [
+            ["path", "Java 源文件路径。"],
+            ["extra", "可填 -d 输出目录、-c classloader hash 等。"],
+          ],
+          build: (c) => join(["mc", arg(c.path || "<source.java>"), c.extra]),
+        },
+        {
+          id: "redefine",
+          name: "redefine",
+          short: "热替换 class",
+          summary: "加载外部 class 文件并 redefine 到 JVM。",
+          doc: `${DOC}/redefine.html`,
+          explain: "redefine 是高风险热替换命令，适合非常明确的临时修复或验证。执行前确认 class 文件与目标 JVM 兼容。",
+          params: [["path", "外部 .class 文件路径。"]],
+          build: (c) => join(["redefine", arg(c.path || "<class-file-path>")]),
+        },
+        {
+          id: "retransform",
+          name: "retransform",
+          short: "retransform class",
+          summary: "加载外部 class 文件并触发 retransform。",
+          doc: `${DOC}/retransform.html`,
+          explain: "retransform 可管理已加载的 retransform entries，适合比 redefine 更可控的类转换场景。",
+          params: [
+            ["path", "外部 .class 文件路径。"],
+            ["extra", "可填 -l 查看、--deleteAll 清理等。"],
+          ],
+          build: (c) => join(["retransform", c.extra || arg(c.path || "<class-file-path>")]),
+        },
+        {
+          id: "profiler-start",
+          name: "profiler start",
+          short: "开始火焰图",
+          summary: "启动 async-profiler 采样。",
+          doc: `${DOC}/profiler.html`,
+          explain: "profiler start 默认采 CPU，可在附加参数中填 --event alloc、--event lock、--duration 60 等。",
+          params: [["extra", "默认 --event cpu，可改为 --event alloc / --duration 60 / -t 等。"]],
+          build: (c) => join(["profiler start", c.extra || "--event cpu"]),
+        },
+        {
+          id: "profiler-stop",
+          name: "profiler stop",
+          short: "停止并导出火焰图",
+          summary: "停止采样并生成 html/jfr/md 等结果文件。",
+          doc: `${DOC}/profiler.html`,
+          explain: "profiler stop 默认生成 html；也可以在附加参数填 --format md 或 --format jfr。",
+          params: [
+            ["path", "输出文件，例如 /tmp/profile.html 或 /tmp/profile.md。"],
+            ["extra", "默认 --format html。"],
+          ],
+          build: (c) => join(["profiler stop", c.path && `--file ${arg(c.path)}`, c.extra || "--format html"]),
+        },
+        {
+          id: "profiler-status",
+          name: "profiler status",
+          short: "采样状态",
+          summary: "查看 profiler 是否正在运行。",
+          doc: `${DOC}/profiler.html`,
+          explain: "查看当前 profiler 事件类型和运行时间。",
+          params: [["profiler status", "无参数。"]],
+          build: () => "profiler status",
+        },
+        {
+          id: "profiler-list",
+          name: "profiler list",
+          short: "可采样事件",
+          summary: "列出当前平台支持的 profiler events。",
+          doc: `${DOC}/profiler.html`,
+          explain: "不同 OS/内核支持的 profiler events 不同，采 alloc/lock/perf events 前先 list。",
+          params: [["profiler list", "无参数。"]],
+          build: () => "profiler list",
+        },
+        {
+          id: "jfr-start",
+          name: "jfr start",
+          short: "开始 JFR",
+          summary: "启动 Java Flight Recorder 录制。",
+          doc: `${DOC}/jfr.html`,
+          explain: "jfr start 适合做较完整的运行时事件记录。名称填在“名称”，输出文件填在“路径”。",
+          params: [
+            ["-n", "录制名称。"],
+            ["-d", "持续时间，这里使用周期秒数。"],
+            ["-f", "输出 jfr 文件。"],
+          ],
+          build: (c) => join(["jfr start", "-n", arg(c.nameArg || "arthas-recording"), "-d", `${c.cycle}s`, "-f", arg(c.path || "arthas-output/recording.jfr"), c.extra]),
+        },
+        {
+          id: "jfr-stop",
+          name: "jfr stop",
+          short: "停止 JFR",
+          summary: "停止指定 JFR 录制。",
+          doc: `${DOC}/jfr.html`,
+          explain: "停止正在运行的 JFR recording；如果需要导出文件，可配合 jfr dump。",
+          params: [["-n", "录制名称，默认 arthas-recording。"]],
+          build: (c) => join(["jfr stop", "-n", arg(c.nameArg || "arthas-recording")]),
+        },
+        {
+          id: "jfr-status",
+          name: "jfr status",
+          short: "JFR 状态",
+          summary: "查看当前 JFR recording 状态。",
+          doc: `${DOC}/jfr.html`,
+          explain: "列出当前 JVM 内 JFR recording 状态。",
+          params: [["jfr status", "无参数。"]],
+          build: () => "jfr status",
+        },
+        {
+          id: "options",
+          name: "options",
+          short: "Arthas 全局开关",
+          summary: "查看或设置 Arthas 全局 options。",
+          doc: `${DOC}/options.html`,
+          explain: "options 可查看和修改 Arthas 行为，例如 unsafe、json-format、disable-sub-class 等。",
+          params: [
+            ["name", "option 名称。"],
+            ["value", "option 值。"],
+          ],
+          build: (c) => join(["options", c.nameArg, c.valueArg]),
+        },
+        {
+          id: "auth",
+          name: "auth",
+          short: "鉴权",
+          summary: "对启用鉴权的 Arthas 会话输入 token/password。",
+          doc: `${DOC}/auth.html`,
+          explain: "当 Arthas 开启 auth 时，用 auth 命令进行认证。值字段放 token/password。",
+          params: [["value", "认证 token/password。"]],
+          build: (c) => join(["auth", c.valueArg || "<password>"]),
+        },
+        {
+          id: "session",
+          name: "session",
+          short: "会话信息",
+          summary: "查看当前 Arthas session 信息。",
+          doc: `${DOC}/session.html`,
+          explain: "session 用于确认当前会话 ID、连接方式和 session 相关信息。",
+          params: [["session", "无参数。"]],
+          build: () => "session",
+        },
+        {
+          id: "version",
+          name: "version",
+          short: "版本",
+          summary: "查看当前 Arthas 版本。",
+          doc: `${DOC}/version.html`,
+          explain: "version 打印当前连接目标 JVM 的 Arthas 版本。",
+          params: [["version", "无参数。"]],
+          build: () => "version",
+        },
+        {
+          id: "help",
+          name: "help",
+          short: "帮助",
+          summary: "查看命令帮助。",
+          doc: `${DOC}/help.html`,
+          explain: "help 可查看全部命令或指定命令的用法。名称字段可填命令名。",
+          params: [["name", "可选命令名。"]],
+          build: (c) => join(["help", c.nameArg]),
+        },
+        {
+          id: "history",
+          name: "history",
+          short: "历史命令",
+          summary: "查看 Arthas 命令历史。",
+          doc: `${DOC}/history.html`,
+          explain: "history 用于回看当前会话执行过的命令。",
+          params: [["history", "无参数。"]],
+          build: () => "history",
+        },
+        {
+          id: "keymap",
+          name: "keymap",
+          short: "快捷键",
+          summary: "查看 Arthas 快捷键映射。",
+          doc: `${DOC}/keymap.html`,
+          explain: "keymap 展示当前 shell 快捷键绑定。",
+          params: [["keymap", "无参数。"]],
+          build: () => "keymap",
+        },
+        {
+          id: "pwd",
+          name: "pwd",
+          short: "工作目录",
+          summary: "查看 Arthas 当前工作目录。",
+          doc: `${DOC}/pwd.html`,
+          explain: "pwd 输出 Arthas 当前工作目录。",
+          params: [["pwd", "无参数。"]],
+          build: () => "pwd",
+        },
+        {
+          id: "cat",
+          name: "cat",
+          short: "查看文件",
+          summary: "打印目标 JVM 所在机器上的文件内容。",
+          doc: `${DOC}/cat.html`,
+          explain: "cat 用于查看目标进程所在机器上的文本文件。路径填在“路径”。",
+          params: [["path", "文件路径。"]],
+          build: (c) => join(["cat", arg(c.path || "<file-path>")]),
+        },
+        {
+          id: "grep",
+          name: "grep pipe",
+          short: "管道过滤",
+          summary: "示例：对 sm 输出做 grep 过滤。",
+          doc: `${DOC}/grep.html`,
+          explain: "grep 通常作为 Arthas 管道命令使用，例如 sm/sc/jad 输出后过滤关键字。",
+          params: [
+            ["name", "grep 关键字。"],
+            ["class/method", "默认对 sm 输出过滤。"],
+          ],
+          build: (c) => join(["sm", "-d", c.cls, c.method, "| grep", quote(c.nameArg || c.method || "<keyword>")]),
+        },
+        {
+          id: "plaintext",
+          name: "plaintext pipe",
+          short: "去掉 ANSI 颜色",
+          summary: "示例：把命令输出转换为无颜色纯文本。",
+          doc: `${DOC}/commands.html#pipe`,
+          explain: "plaintext 是 Arthas pipe 支持的处理器，适合把 jad、thread、trace 等带颜色输出转为纯文本，便于复制、保存或继续接 grep/wc。",
+          params: [
+            ["| plaintext", "从前一个命令接收输出并移除 ANSI 颜色控制字符。"],
+            ["extra", "可在附加参数里改写前置命令，例如 thread -n 10。"],
+          ],
+          build: (c) => join([c.extra || `jad ${c.cls}`, "| plaintext"]),
+        },
+        {
+          id: "wc",
+          name: "wc pipe",
+          short: "管道计数",
+          summary: "示例：统计管道输出行数。",
+          doc: `${DOC}/commands.html#pipe`,
+          explain: "wc 是 Arthas pipe 支持的处理器，用于统计前一个命令输出行数，常用于粗略估算 sc/sm/grep 结果规模。",
+          params: [
+            ["| wc", "从前一个命令接收输出并统计行数。"],
+            ["extra", "可在附加参数里改写前置命令，例如 sc *Controller。"],
+          ],
+          build: (c) => join([c.extra || `sm -d ${c.cls} ${c.method}`, "| wc"]),
+        },
+        {
+          id: "tee",
+          name: "tee pipe",
+          short: "输出落盘",
+          summary: "示例：watch 输出同时写入文件。",
+          doc: `${DOC}/tee.html`,
+          explain: "tee 通常作为管道命令使用，可把 watch/trace 等输出保存到文件。",
+          params: [["path", "输出文件路径。"]],
+          build: (c) => join(["watch", c.cls, c.method, quote(c.watchExpr), "| tee", arg(c.path || "arthas-output/watch.log")]),
+        },
+        {
+          id: "base64",
+          name: "base64",
+          short: "Base64 编解码",
+          summary: "在 Arthas shell 中做 Base64 编码或解码。",
+          doc: `${DOC}/base64.html`,
+          explain: "base64 是基础命令，可快速编码/解码字符串。解码参数可填在附加参数里，例如 -d。",
+          params: [
+            ["value", "要编码/解码的内容。"],
+            ["extra", "可填 -d 解码。"],
+          ],
+          build: (c) => join(["base64", c.extra, quote(c.valueArg || "hello")]),
+        },
+        {
+          id: "echo",
+          name: "echo",
+          short: "输出文本",
+          summary: "输出一段文本。",
+          doc: `${DOC}/echo.html`,
+          explain: "echo 是 Arthas 基础命令，常用于验证 shell、管道或 tee 行为。",
+          params: [["value", "要输出的文本。"]],
+          build: (c) => join(["echo", quote(c.valueArg || "hello")]),
+        },
+        {
+          id: "cls",
+          name: "cls",
+          short: "清屏",
+          summary: "清理当前 Arthas 终端屏幕。",
+          doc: `${DOC}/cls.html`,
+          explain: "cls 清屏，不影响目标 JVM。",
+          params: [["cls", "无参数。"]],
+          build: () => "cls",
+        },
+        {
+          id: "stop",
+          name: "stop",
+          short: "停止 Arthas",
+          summary: "停止 Arthas server 并销毁所有会话。",
+          doc: `${DOC}/stop.html`,
+          explain: "stop 会终止目标 JVM 上的 Arthas server，所有 session 会被销毁；增强类也会 reset。",
+          params: [["stop", "无参数，高影响命令。"]],
+          build: () => "stop",
+        },
+        {
+          id: "quit",
+          name: "quit",
+          short: "退出当前会话",
+          summary: "退出当前 Arthas session，不停止 Arthas server。",
+          doc: `${DOC}/quit.html`,
+          explain: "quit/exit 只退出当前连接，不影响其他 session，也不停止 Arthas server。",
+          params: [["quit", "无参数。"]],
+          build: () => "quit",
+        },
+        {
+          id: "jobs",
+          name: "jobs",
+          short: "后台任务",
+          summary: "查看 Arthas 异步后台任务。",
+          doc: `${DOC}/async.html`,
+          explain: "当命令用 & 放到后台执行后，可用 jobs 查看任务列表。",
+          params: [["jobs", "无参数。"]],
+          build: () => "jobs",
+        },
+        {
+          id: "async-watch",
+          name: "watch &",
+          short: "后台异步观察",
+          summary: "把 watch 放到后台并把结果重定向到文件。",
+          doc: `${DOC}/async.html`,
+          explain: "当问题很难复现、需要长时间等待一次命中时，可以把 watch 放入后台异步任务，并用 > 把输出写入文件。之后用 jobs 查看任务，用 kill 终止任务。",
+          params: [
+            [">", "重定向输出到文件，路径填在“路径 / file / output”。"],
+            ["&", "把命令放到后台异步执行。"],
+            ["-n/-x/condition", "复用次数、展开深度和条件表达式，建议给高频方法加严格条件。"],
+          ],
+          build: (c) => join(["watch", c.watchPoint, `-n ${c.count}`, `-x ${c.expand}`, c.matchOpt(), c.loaderOpt("-c"), c.cls, c.method, quote(c.watchExpr), c.condition && quote(c.condition), ">", arg(c.path || "arthas-output/watch.log"), "&"]),
+        },
+        {
+          id: "job-kill",
+          name: "kill job",
+          short: "终止后台任务",
+          summary: "终止 Arthas 后台 job。",
+          doc: `${DOC}/async.html`,
+          explain: "kill 用于终止后台 job。job id 填在 thread id / job id。",
+          params: [["job id", "后台任务 ID。"]],
+          build: (c) => join(["kill", c.threadId || "<job-id>"]),
+        },
+        {
+          id: "fg-bg",
+          name: "fg / bg",
+          short: "切换后台任务",
+          summary: "把后台任务切到前台，或继续后台运行。",
+          doc: `${DOC}/async.html`,
+          explain: "默认生成 fg；如果要 bg，可在附加参数填 bg。",
+          params: [
+            ["job id", "后台任务 ID。"],
+            ["extra", "填 bg 时生成 bg <job-id>，否则生成 fg <job-id>。"],
+          ],
+          build: (c) => join([c.extra === "bg" ? "bg" : "fg", c.threadId || "<job-id>"]),
+        },
       ];
+
+      const commandCategoryMap = {
+        watch: "observe",
+        trace: "observe",
+        stack: "observe",
+        monitor: "observe",
+        tt: "observe",
+        line: "observe",
+        reset: ["observe", "session"],
+
+        dashboard: "jvm",
+        thread: "jvm",
+        "thread-block": "jvm",
+        jvm: "jvm",
+        memory: "jvm",
+        heapdump: "jvm",
+        logger: "jvm",
+        "logger-set": "jvm",
+        sysprop: "jvm",
+        sysenv: "jvm",
+        vmoption: "jvm",
+        mbean: "jvm",
+        perfcounter: "jvm",
+        getstatic: "jvm",
+        ognl: "jvm",
+        vmtool: "jvm",
+
+        jad: "class",
+        sc: "class",
+        sm: "class",
+        classloader: "class",
+        "classloader-resource": "class",
+        "classloader-metaspace": "class",
+        dump: "class",
+        mc: "class",
+        redefine: "class",
+        retransform: "class",
+
+        "profiler-start": "profiler",
+        "profiler-stop": "profiler",
+        "profiler-status": "profiler",
+        "profiler-list": "profiler",
+        "jfr-start": "profiler",
+        "jfr-stop": "profiler",
+        "jfr-status": "profiler",
+
+        options: "session",
+        auth: "session",
+        session: "session",
+        version: "session",
+        help: "session",
+        history: "session",
+        keymap: "session",
+        stop: "session",
+        quit: "session",
+
+        pwd: "pipe",
+        cat: "pipe",
+        grep: "pipe",
+        plaintext: "pipe",
+        wc: "pipe",
+        tee: "pipe",
+        base64: "pipe",
+        echo: "pipe",
+        cls: "pipe",
+
+        jobs: "async",
+        "async-watch": "async",
+        "job-kill": "async",
+        "fg-bg": "async",
+      };
 
       const $ = (id) => document.getElementById(id);
       const ids = {
@@ -931,11 +2186,18 @@ com.example.order.OrderService.submit"></textarea>
         maxMatchEnabled: $("maxMatchEnabled"),
         classloader: $("classloader"),
         watchPoint: $("watchPoint"),
+        pathInput: $("pathInput"),
+        threadId: $("threadId"),
+        nameArg: $("nameArg"),
+        valueArg: $("valueArg"),
+        extraArgs: $("extraArgs"),
         commandSelect: $("commandSelect"),
+        commandFilter: $("commandFilter"),
       };
 
       const out = {
         parseState: $("parse-state"),
+        categoryList: $("categoryList"),
         list: $("commandList"),
         quickTitle: $("quickTitle"),
         quickCommand: $("quickCommand"),
@@ -953,8 +2215,10 @@ com.example.order.OrderService.submit"></textarea>
 
       let active = new URLSearchParams(location.search).get("cmd") || localStorage.getItem("arthas-v2-active") || "watch";
       if (!commands.some((cmd) => cmd.id === active)) active = "watch";
-      let order = safeParse(localStorage.getItem("arthas-v2-order")) || commands.map((cmd) => cmd.id);
-      order = normalizeOrder(order);
+      let activeCategory = localStorage.getItem(CATEGORY_KEY) || commandCategories(commandById(active))[0] || categories[0].id;
+      if (!categories.some((cat) => cat.id === activeCategory)) activeCategory = categories[0].id;
+      let orderByCategory = safeParse(localStorage.getItem(ORDER_KEY)) || {};
+      const legacyOrder = safeParse(localStorage.getItem(LEGACY_ORDER_KEY));
       let lastClass = "";
       let lastMethod = "";
       let dragging = null;
@@ -963,14 +2227,23 @@ com.example.order.OrderService.submit"></textarea>
         try { return JSON.parse(value || "null"); } catch { return null; }
       }
 
-      function normalizeOrder(value) {
-        const all = commands.map((cmd) => cmd.id);
-        const known = Array.isArray(value) ? value.filter((id) => all.includes(id)) : [];
-        return [...known, ...all.filter((id) => !known.includes(id))];
-      }
-
       function commandById(id) {
         return commands.find((cmd) => cmd.id === id) || commands[0];
+      }
+
+      function commandCategories(cmd) {
+        const value = commandCategoryMap[cmd.id] || categories[0].id;
+        return Array.isArray(value) ? value : [value];
+      }
+
+      function orderedCommands(categoryId) {
+        const list = commands.filter((cmd) => commandCategories(cmd).includes(categoryId));
+        const saved = Array.isArray(orderByCategory[categoryId]) ? orderByCategory[categoryId] : legacyOrder;
+        if (!Array.isArray(saved)) return list;
+        const map = new Map(list.map((cmd) => [cmd.id, cmd]));
+        const ordered = saved.map((id) => map.get(id)).filter(Boolean);
+        const rest = list.filter((cmd) => !saved.includes(cmd.id));
+        return ordered.concat(rest);
       }
 
       function join(parts) {
@@ -982,6 +2255,13 @@ com.example.order.OrderService.submit"></textarea>
         if (!raw) return "";
         if (raw.includes("'") && !raw.includes('"')) return `"${raw}"`;
         return `'${raw.replaceAll("'", "\\'")}'`;
+      }
+
+      function arg(value) {
+        const raw = String(value || "").trim();
+        if (!raw) return "";
+        if (/^<[^>]+>$/.test(raw)) return raw;
+        return /^[A-Za-z0-9_./:@%+=,$*-]+$/.test(raw) ? raw : quote(raw);
       }
 
       function arthasPattern(value) {
@@ -1009,6 +2289,11 @@ com.example.order.OrderService.submit"></textarea>
           maxMatchEnabled: ids.maxMatchEnabled.checked,
           classloader: ids.classloader.value.trim(),
           watchPoint: ids.watchPoint.value,
+          path: ids.pathInput.value.trim(),
+          threadId: ids.threadId.value.trim(),
+          nameArg: ids.nameArg.value.trim(),
+          valueArg: ids.valueArg.value.trim(),
+          extra: ids.extraArgs.value.trim(),
           kind: ids.kind.value,
           matchOpt() {
             return this.maxMatchEnabled ? `-m ${this.maxMatch}` : "";
@@ -1151,9 +2436,29 @@ com.example.order.OrderService.submit"></textarea>
         render();
       }
 
-      function setActive(id) {
+      function setCategory(id) {
+        if (!categories.some((cat) => cat.id === id)) return;
+        activeCategory = id;
+        localStorage.setItem(CATEGORY_KEY, id);
+        const first = orderedCommands(id)[0];
+        if (first && !commandCategories(commandById(active)).includes(id)) {
+          active = first.id;
+          localStorage.setItem("arthas-v2-active", active);
+          const url = new URL(location.href);
+          url.searchParams.set("cmd", active);
+          history.replaceState(null, "", url);
+        }
+        ids.commandFilter.value = "";
+        render();
+      }
+
+      function setActive(id, keepCategory = false) {
         if (!commands.some((cmd) => cmd.id === id)) return;
         active = id;
+        if (!keepCategory && !commandCategories(commandById(id)).includes(activeCategory)) {
+          activeCategory = commandCategories(commandById(id))[0] || categories[0].id;
+          localStorage.setItem(CATEGORY_KEY, activeCategory);
+        }
         localStorage.setItem("arthas-v2-active", id);
         const url = new URL(location.href);
         url.searchParams.set("cmd", id);
@@ -1161,9 +2466,22 @@ com.example.order.OrderService.submit"></textarea>
         render();
       }
 
+      function renderCategories() {
+        out.categoryList.innerHTML = "";
+        categories.forEach((cat) => {
+          const count = commands.filter((cmd) => commandCategories(cmd).includes(cat.id)).length;
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `category-button${cat.id === activeCategory ? " active" : ""}`;
+          button.dataset.category = cat.id;
+          button.innerHTML = `<span class="cat-icon" aria-hidden="true">${cat.icon}</span><span class="cat-name">${cat.name}</span><span class="cat-count">${count}</span>`;
+          button.addEventListener("click", () => setCategory(cat.id));
+          out.categoryList.appendChild(button);
+        });
+      }
+
       function renderSelect() {
-        ids.commandSelect.innerHTML = order.map((id) => {
-          const cmd = commandById(id);
+        ids.commandSelect.innerHTML = orderedCommands(activeCategory).map((cmd) => {
           return `<option value="${cmd.id}">${cmd.name} - ${cmd.short}</option>`;
         }).join("");
         ids.commandSelect.value = active;
@@ -1171,8 +2489,22 @@ com.example.order.OrderService.submit"></textarea>
 
       function renderList() {
         out.list.innerHTML = "";
-        order.forEach((id) => {
-          const cmd = commandById(id);
+        const filter = ids.commandFilter.value.trim().toLowerCase();
+        const list = orderedCommands(activeCategory).filter((cmd) => {
+          if (!filter) return true;
+          return `${cmd.name} ${cmd.short} ${cmd.summary}`.toLowerCase().includes(filter);
+        });
+
+        if (!list.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty-state";
+          empty.textContent = "当前分类没有匹配的命令。";
+          out.list.appendChild(empty);
+          return;
+        }
+
+        list.forEach((cmd) => {
+          const id = cmd.id;
           const row = document.createElement("div");
           row.className = `command-row${id === active ? " active" : ""}`;
           row.dataset.id = id;
@@ -1183,8 +2515,8 @@ com.example.order.OrderService.submit"></textarea>
               <span><span class="name">${cmd.name}</span><span class="desc">${cmd.short}</span></span>
             </label>
           `;
-          row.querySelector("input").addEventListener("change", () => setActive(id));
-          row.querySelector(".choice").addEventListener("click", () => setActive(id));
+          row.querySelector("input").addEventListener("change", () => setActive(id, true));
+          row.querySelector(".choice").addEventListener("click", () => setActive(id, true));
           row.querySelector(".drag").addEventListener("pointerdown", (event) => {
             event.preventDefault();
             dragging = { id, x: event.clientX, y: event.clientY, moved: false };
@@ -1194,6 +2526,10 @@ com.example.order.OrderService.submit"></textarea>
       }
 
       function render() {
+        if (!commandCategories(commandById(active)).includes(activeCategory)) {
+          const first = orderedCommands(activeCategory)[0];
+          if (first) active = first.id;
+        }
         const cmd = commandById(active);
         const c = context();
         const text = cmd.build(c);
@@ -1210,6 +2546,7 @@ com.example.order.OrderService.submit"></textarea>
         out.params.innerHTML = cmd.params.map(([key, value]) => `<tr><td>${key}</td><td>${value}</td></tr>`).join("");
         out.notes.innerHTML = kotlinNotes(c.kind).map((note) => `<li>${note}</li>`).join("");
         renderPreflight(c);
+        renderCategories();
         renderSelect();
         renderList();
       }
@@ -1244,12 +2581,14 @@ com.example.order.OrderService.submit"></textarea>
 
       function moveBefore(sourceId, targetId) {
         if (!sourceId || !targetId || sourceId === targetId) return;
-        const from = order.indexOf(sourceId);
-        const to = order.indexOf(targetId);
+        const current = orderedCommands(activeCategory).map((cmd) => cmd.id);
+        const from = current.indexOf(sourceId);
+        const to = current.indexOf(targetId);
         if (from < 0 || to < 0) return;
-        order.splice(from, 1);
-        order.splice(to, 0, sourceId);
-        localStorage.setItem("arthas-v2-order", JSON.stringify(order));
+        current.splice(from, 1);
+        current.splice(to, 0, sourceId);
+        orderByCategory[activeCategory] = current;
+        localStorage.setItem(ORDER_KEY, JSON.stringify(orderByCategory));
         render();
       }
 
@@ -1266,10 +2605,11 @@ com.example.order.OrderService.submit"></textarea>
         dragging = null;
       });
 
-      ids.commandSelect.addEventListener("change", () => setActive(ids.commandSelect.value));
+      ids.commandSelect.addEventListener("change", () => setActive(ids.commandSelect.value, true));
+      ids.commandFilter.addEventListener("input", renderList);
       $("resetOrder").addEventListener("click", () => {
-        order = commands.map((cmd) => cmd.id);
-        localStorage.removeItem("arthas-v2-order");
+        delete orderByCategory[activeCategory];
+        localStorage.setItem(ORDER_KEY, JSON.stringify(orderByCategory));
         render();
       });
       $("infer").addEventListener("click", () => infer(true));

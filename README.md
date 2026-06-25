@@ -13,7 +13,7 @@
 默认地址：
 
 ```text
-http://127.0.0.1:8766/index.html?v=v2-20260610-1
+http://127.0.0.1:8766/index.html?v=v2-20260625-4
 ```
 
 保持启动脚本打开的终端窗口不要关闭；关闭窗口会停止本地服务。
@@ -21,9 +21,10 @@ http://127.0.0.1:8766/index.html?v=v2-20260610-1
 ## 交互
 
 - 优先用命令区顶部的下拉框切换命令。
-- 也可以点击下面的 radio 命令卡片。
-- 左侧 `::` 手柄用于拖拽排序。
+- 先点左侧分类，再用命令区下拉框或 radio 命令卡片切换命令。
+- 左侧 `::` 手柄用于在当前分类内拖拽排序。
 - 每次切换都会同步更新顶部预览、完整命令、解释、参数表和 Kotlin 注意点。
+- 已补充 Arthas 官方主要命令分类：JVM 状态、线程、内存、heapdump、logger、sysprop/sysenv/vmoption、MBean、classloader、dump/mc/redefine/retransform、profiler/JFR、options、基础命令、pipe 处理器和异步 jobs。
 
 ## 命中失败排查
 
